@@ -1,0 +1,42 @@
+{% extends "admin/change_list.html" %}
+
+{% block content_title %}
+    {{ block.super }}
+
+    {% if summary_stats %}
+    <div style="background: #f8f9fa; padding: 15px; margin: 20px 0; border-radius: 5px; border-left: 4px solid #2196F3;">
+        <h3 style="margin-top: 0; color: #333;">📊 Expense Summary</h3>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
+
+            <div style="background: white; padding: 12px; border-radius: 4px; border: 1px solid #ddd;">
+                <div style="font-size: 12px; color: #666; text-transform: uppercase;">Total Expenses</div>
+                <div style="font-size: 24px; font-weight: bold; color: #2196F3;">{{ summary_stats.total_count }}</div>
+                <div style="font-size: 14px; color: #333; margin-top: 5px;">{{ summary_stats.total_amount }}</div>
+            </div>
+
+            <div style="background: white; padding: 12px; border-radius: 4px; border: 1px solid #ddd;">
+                <div style="font-size: 12px; color: #666; text-transform: uppercase;">✓ Approved</div>
+                <div style="font-size: 24px; font-weight: bold; color: #4CAF50;">{{ summary_stats.approved_count }}</div>
+                <div style="font-size: 14px; color: #333; margin-top: 5px;">{{ summary_stats.approved_amount }}</div>
+            </div>
+
+            <div style="background: white; padding: 12px; border-radius: 4px; border: 1px solid #ddd;">
+                <div style="font-size: 12px; color: #666; text-transform: uppercase;">⏳ Pending</div>
+                <div style="font-size: 24px; font-weight: bold; color: #ff9800;">{{ summary_stats.pending_count }}</div>
+                <div style="font-size: 14px; color: #333; margin-top: 5px;">{{ summary_stats.pending_amount }}</div>
+            </div>
+
+            <div style="background: white; padding: 12px; border-radius: 4px; border: 1px solid #ddd;">
+                <div style="font-size: 12px; color: #666; text-transform: uppercase;">✗ Rejected</div>
+                <div style="font-size: 24px; font-weight: bold; color: #f44336;">{{ summary_stats.rejected_count }}</div>
+            </div>
+
+            <div style="background: white; padding: 12px; border-radius: 4px; border: 1px solid #ddd;">
+                <div style="font-size: 12px; color: #666; text-transform: uppercase;">📝 Draft</div>
+                <div style="font-size: 24px; font-weight: bold; color: #999;">{{ summary_stats.draft_count }}</div>
+            </div>
+
+        </div>
+    </div>
+    {% endif %}
+{% endblock %}

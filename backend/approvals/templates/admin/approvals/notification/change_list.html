@@ -1,0 +1,118 @@
+{% extends "admin/change_list.html" %}
+{% load static %}
+
+{% block content %}
+{% if dashboard_summary %}
+<div style="margin-bottom: 20px; padding: 20px; background: #f5f5f5; border-radius: 8px;">
+    <h2 style="margin-top: 0; color: #333; font-size: 24px; margin-bottom: 20px;">📊 Pending Items Dashboard</h2>
+
+    <!-- Metrics Grid -->
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 25px;">
+
+        <!-- Pending Approvals -->
+        <div style="background: white; padding: 20px; border-radius: 6px; border-left: 4px solid #2196F3; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+            <div style="color: #666; font-size: 12px; text-transform: uppercase; margin-bottom: 8px;">Pending Approvals</div>
+            <div style="font-size: 28px; font-weight: bold; color: #2196F3;">{{ dashboard_summary.pending_approvals_count }}</div>
+            <div style="color: #999; font-size: 12px; margin-top: 5px;">Awaiting your decision</div>
+        </div>
+
+        <!-- Unread Notifications -->
+        <div style="background: white; padding: 20px; border-radius: 6px; border-left: 4px solid #9C27B0; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+            <div style="color: #666; font-size: 12px; text-transform: uppercase; margin-bottom: 8px;">Unread Notifications</div>
+            <div style="font-size: 28px; font-weight: bold; color: #9C27B0;">{{ dashboard_summary.unread_notifications }}</div>
+            <div style="color: #999; font-size: 12px; margin-top: 5px;">New messages</div>
+        </div>
+
+        <!-- Budget Alerts -->
+        <div style="background: white; padding: 20px; border-radius: 6px; border-left: 4px solid #ff9800; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+            <div style="color: #666; font-size: 12px; text-transform: uppercase; margin-bottom: 8px;">Budget Alerts (7 days)</div>
+            <div style="font-size: 28px; font-weight: bold; color: #ff9800;">{{ dashboard_summary.budget_alerts }}</div>
+            <div style="color: #999; font-size: 12px; margin-top: 5px;">Over threshold</div>
+        </div>
+
+        <!-- Pending Expenses -->
+        <div style="background: white; padding: 20px; border-radius: 6px; border-left: 4px solid #4CAF50; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+            <div style="color: #666; font-size: 12px; text-transform: uppercase; margin-bottom: 8px;">Pending Expenses</div>
+            <div style="font-size: 28px; font-weight: bold; color: #4CAF50;">{{ dashboard_summary.pending_expenses_count }}</div>
+            <div style="color: #999; font-size: 12px; margin-top: 5px;">Total: {{ dashboard_summary.pending_expenses_total }}</div>
+        </div>
+
+    </div>
+
+    <!-- Pending Approvals List -->
+    {% if dashboard_summary.pending_approvals_count > 0 %}
+    <div style="background: white; padding: 20px; border-radius: 6px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+        <h3 style="margin-top: 0; color: #333; font-size: 18px; margin-bottom: 15px; border-bottom: 2px solid #2196F3; padding-bottom: 10px;">
+            ⏳ Your Pending Approvals
+        </h3>
+
+        {% if dashboard_summary.pending_approvals %}
+        <table style="width: 100%; border-collapse: collapse;">
+            <thead>
+                <tr style="background: #f5f5f5; text-align: left;">
+                    <th style="padding: 12px; font-weight: 600; color: #666; font-size: 12px; text-transform: uppercase;">Expense</th>
+                    <th style="padding: 12px; font-weight: 600; color: #666; font-size: 12px; text-transform: uppercase;">Amount</th>
+                    <th style="padding: 12px; font-weight: 600; color: #666; font-size: 12px; text-transform: uppercase;">Level</th>
+                    <th style="padding: 12px; font-weight: 600; color: #666; font-size: 12px; text-transform: uppercase;">Submitted</th>
+                    <th style="padding: 12px; font-weight: 600; color: #666; font-size: 12px; text-transform: uppercase;">Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for approval in dashboard_summary.pending_approvals %}
+                <tr style="border-bottom: 1px solid #eee;">
+                    <td style="padding: 12px;">
+                        <strong>{{ approval.expense.vendor }}</strong><br>
+                        <small style="color: #666;">{{ approval.expense.date }}</small>
+                    </td>
+                    <td style="padding: 12px;">
+                        <span style="font-weight: bold; color: #333;">${{ approval.expense.total_amount }}</span>
+                    </td>
+                    <td style="padding: 12px;">
+                        {% if approval.level == 1 %}
+                        <span style="background-color: #2196F3; color: white; padding: 3px 8px; border-radius: 3px; font-size: 11px;">MANAGER</span>
+                        {% elif approval.level == 2 %}
+                        <span style="background-color: #9C27B0; color: white; padding: 3px 8px; border-radius: 3px; font-size: 11px;">FINANCE</span>
+                        {% endif %}
+                    </td>
+                    <td style="padding: 12px;">
+                        <small style="color: #666;">{{ approval.created_at|timesince }} ago</small>
+                    </td>
+                    <td style="padding: 12px;">
+                        <a href="{% url 'admin:approvals_approval_change' approval.id %}"
+                           style="background: #2196F3; color: white; padding: 6px 12px; border-radius: 4px; text-decoration: none; font-size: 12px;">
+                            Review
+                        </a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <p style="color: #999; text-align: center; padding: 20px;">No pending approvals at this time.</p>
+        {% endif %}
+    </div>
+    {% endif %}
+
+    <!-- Quick Actions -->
+    <div style="margin-top: 15px; padding: 15px; background: #e3f2fd; border-radius: 6px; border-left: 4px solid #2196F3;">
+        <strong style="color: #1976D2;">💡 Quick Actions:</strong>
+        <div style="margin-top: 8px;">
+            <a href="{% url 'admin:approvals_approval_changelist' %}?status__exact=PENDING"
+               style="color: #2196F3; text-decoration: none; margin-right: 15px; font-size: 14px;">
+                → View All Pending Approvals
+            </a>
+            <a href="{% url 'admin:expenses_expense_changelist' %}?status__exact=PENDING"
+               style="color: #2196F3; text-decoration: none; margin-right: 15px; font-size: 14px;">
+                → View All Pending Expenses
+            </a>
+            <a href="{% url 'admin:segments_budget_changelist' %}"
+               style="color: #2196F3; text-decoration: none; font-size: 14px;">
+                → View Budget Status
+            </a>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+{{ block.super }}
+{% endblock %}

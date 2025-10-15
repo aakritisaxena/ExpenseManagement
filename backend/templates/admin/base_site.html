@@ -1,0 +1,59 @@
+{% extends "admin/base.html" %}
+
+{% block extrahead %}
+{{ block.super }}
+<style>
+.impersonation-banner {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 15px 20px;
+    text-align: center;
+    font-size: 14px;
+    font-weight: 600;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+    position: sticky;
+    top: 0;
+    z-index: 9999;
+    border-bottom: 3px solid #5a67d8;
+}
+
+.impersonation-banner a {
+    color: white;
+    background: rgba(255,255,255,0.2);
+    padding: 8px 16px;
+    border-radius: 5px;
+    text-decoration: none;
+    margin-left: 15px;
+    transition: all 0.3s;
+    border: 2px solid rgba(255,255,255,0.3);
+}
+
+.impersonation-banner a:hover {
+    background: rgba(255,255,255,0.3);
+    border-color: white;
+}
+
+.impersonation-icon {
+    font-size: 18px;
+    margin-right: 8px;
+}
+</style>
+{% endblock %}
+
+{% block messages %}
+{% if is_impersonating %}
+<div class="impersonation-banner">
+    <span class="impersonation-icon">👤</span>
+    <strong>IMPERSONATION MODE:</strong>
+    You are viewing as <strong>{{ impersonated_user.get_full_name|default:impersonated_user.username }}</strong>
+    ({{ impersonated_user.get_role_display }})
+    {% if impersonated_user.department %}
+    from <strong>{{ impersonated_user.department.name }}</strong>
+    {% endif %}
+    <a href="{% url 'stop_impersonation' %}">
+        Stop Impersonation & Return to {{ real_user.username }}
+    </a>
+</div>
+{% endif %}
+{{ block.super }}
+{% endblock %}
